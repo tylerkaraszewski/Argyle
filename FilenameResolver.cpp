@@ -11,14 +11,10 @@
 
 using std::string;
 
-#ifdef __linux__
-const string FilenameResolver::S_BASE_PATH = "/home/tyler/website/cooked";
-#else
-const string FilenameResolver::S_BASE_PATH = "/Users/tyler/Sites/newsite/cooked";
-#endif
-
-string FilenameResolver::resolve(const string& webPath, string& redirectPath, time_t* mtime)
+string FilenameResolver::resolve(const string& webPath, const Config& config, string& redirectPath, time_t* mtime)
 {
+  string basePath = config.getString(Config::S_KEY_BASE_PATH);
+
   if (mtime != NULL)
   {
     *mtime = 0; // We'll set this to something useful later if we can. Setting it to 0 implies "N/A".
@@ -32,7 +28,7 @@ string FilenameResolver::resolve(const string& webPath, string& redirectPath, ti
     // Nothing was stripped, indicating if a directory, it was requested like a file.
     needToRedirectIfDir = true;
   }
-  string fullPath = S_BASE_PATH + processedWebPath;
+  string fullPath = basePath + processedWebPath;
 
   // Look our path to see if it exists, and if so, what we should do with it.
   struct stat fileStat;
@@ -51,7 +47,7 @@ string FilenameResolver::resolve(const string& webPath, string& redirectPath, ti
     }
     else
     {
-      fullPath = resolveDir(processedWebPath, mtime);
+      fullPath = resolveDir(processedWebPath, config, mtime);
     }
   }
 
@@ -74,22 +70,23 @@ string FilenameResolver::resolve(const string& webPath, string& redirectPath, ti
 }
 
 
-string FilenameResolver::resolveDir(const string& dirPath, time_t* mtime)
+string FilenameResolver::resolveDir(const string& dirPath, const Config& config, time_t* mtime)
 {
   string temp;
   string rPath = dirPath;
-  rPath = resolve(dirPath + "/main.html", temp, mtime);
+  rPath = resolve(dirPath + "/main.html", config, temp, mtime);
   if (!rPath.empty())
   {
     return rPath;
   }
 
-  return findNewestInDir(dirPath);
+  return findNewestInDir(dirPath, config);
 }
 
-string FilenameResolver::findNewestInDir(const std::string& webPath)
+string FilenameResolver::findNewestInDir(const std::string& webPath, const Config& config)
 {
-  string fullPath = S_BASE_PATH + webPath;
+  string basePath = config.getString(Config::S_KEY_BASE_PATH);
+  string fullPath = basePath + webPath;
   char * name = 0;
   DIR * cwd = opendir(fullPath.c_str());
   struct dirent * entry;

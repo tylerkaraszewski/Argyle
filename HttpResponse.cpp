@@ -10,10 +10,11 @@ using std::string;
 string HttpResponse::S_CGI_EXT = ".cgi";
 string HttpResponse::S_STANDARD_HEADERS = "Server: argyle\r\nCache-Control: max-age=600\r\n";
 
-HttpResponse::HttpResponse(const HttpRequest& request, Logger& logger) :
+HttpResponse::HttpResponse(const HttpRequest& request, Logger& logger, const Config& config) :
 m_request(request),
 m_keepAlive(true),
-m_reader(NULL)
+m_reader(NULL),
+m_config(config)
 {
   if (request.getHttpError())
   {
@@ -24,7 +25,7 @@ m_reader(NULL)
 
   string redirectPath;
   time_t mtime = 0;
-  m_path = FilenameResolver::resolve(unescapeUri(m_request.getPath()), redirectPath, &mtime);
+  m_path = FilenameResolver::resolve(unescapeUri(m_request.getPath()), m_config, redirectPath, &mtime);
   if (!redirectPath.empty())
   {
     m_reader = new ErrorReader(301, "", "Location: " + redirectPath + "\r\n");

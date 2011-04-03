@@ -6,6 +6,7 @@
 #include <map>
 #include "Connection.h"
 #include "Logger.h"
+#include "Config.h"
 
 class Server
 {
@@ -20,7 +21,7 @@ class Server
   void stop();
 
   // Constructor that takes a port number on which to listen.
-  Server(short port, Logger& logger);
+  Server(short port, Logger& logger, const Config& config);
   ~Server();
 
   private:
@@ -41,6 +42,7 @@ class Server
   std::map<int, Connection*> m_connections;
   struct sockaddr_in m_address;
   Logger& m_logger;
+  const Config& m_config;
 };
 
 #endif

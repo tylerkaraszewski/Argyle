@@ -12,14 +12,15 @@ using std::string;
 const size_t Connection::S_MAX_REQUEST_SIZE = 1024 * 8;
 const size_t Connection::S_MAX_WRITE_SIZE = 1024 * 256;
 
-Connection::Connection(const int socket, Logger& logger) :
+Connection::Connection(const int socket, Logger& logger, const Config& config) :
 m_socket(socket),
 m_totalBytesToWrite(0),
 m_bytesWritten(0),
 m_currentRequest(0),
 m_currentResponse(0),
 m_isWriting(false),
-m_logger(logger)
+m_logger(logger),
+m_config(config)
 {
 }
 
@@ -111,7 +112,7 @@ bool Connection::process(short int& pollEvents, short int& pollRevents)
       m_logger.logError("Debug: parsed '" + ims + "' to: " + Utils::llToString(m_currentRequest->getIfModifiedSince()));
     }
 
-    m_currentResponse = new HttpResponse(*m_currentRequest, m_logger);
+    m_currentResponse = new HttpResponse(*m_currentRequest, m_logger, m_config);
     m_buffer = m_buffer.substr(bytesParsed); // Trim this off our input buffer since we're done reading it.
     pollEvents = POLLOUT; // Now we want to know if we can write.
     m_isWriting = true;

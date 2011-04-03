@@ -4,6 +4,7 @@
 #include <string>
 #include "HttpRequest.h"
 #include "DataReader.h"
+#include "Config.h"
 
 class HttpResponse
 {
@@ -11,7 +12,7 @@ class HttpResponse
   static std::string S_CGI_EXT;
   static std::string S_STANDARD_HEADERS;
 
-  HttpResponse(const HttpRequest& request, Logger& logger);
+  HttpResponse(const HttpRequest& request, Logger& logger, const Config& config);
   ~HttpResponse();
 
   static std::string unescapeUri(const std::string& escapedUri);
@@ -38,6 +39,7 @@ class HttpResponse
   DataReader* m_reader;
   std::string m_path;
   std::string m_headerBuffer;
+  const Config& m_config;
 };
 
 #endif

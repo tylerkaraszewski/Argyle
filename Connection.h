@@ -4,11 +4,12 @@
 #include "HttpRequest.h"
 #include "HttpResponse.h"
 #include "Logger.h"
+#include "Config.h"
 
 class Connection
 {
   public:
-  Connection(const int socket, Logger& logger);
+  Connection(const int socket, Logger& logger, const Config& config);
   ~Connection();
   bool process(short int& pollEvents, short int& pollRevents);
 
@@ -27,6 +28,7 @@ class Connection
   bool m_isWriting;
   std::string m_writeBuffer;
   Logger& m_logger;
+  const Config& m_config;
 };
 
 #endif

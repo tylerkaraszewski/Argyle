@@ -9,13 +9,14 @@
 using std::vector;
 using std::map;
 
-Server::Server(short port, Logger& logger) :
+Server::Server(short port, Logger& logger, const Config& config) :
 m_mainSocket(0),
 m_sockets(0),
 m_socketCount(0),
 m_port(port),
 m_shouldQuit(false),
-m_logger(logger)
+m_logger(logger),
+m_config(config)
 {
   m_address.sin_family = AF_INET;
   m_address.sin_port = htons(m_port);
@@ -181,7 +182,7 @@ void Server::watchSocket(int socket)
   m_sockets[m_socketCount - 1].fd = socket;
   m_sockets[m_socketCount - 1].events = POLLIN;
   m_sockets[m_socketCount - 1].revents = 0;
-  m_connections[socket] = new Connection(socket, m_logger);
+  m_connections[socket] = new Connection(socket, m_logger, m_config);
 }
 
 void Server::unwatchSockets(const vector<int>& socketsToUnwatch)

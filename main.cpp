@@ -1,6 +1,7 @@
 #include "Server.h"
 #include "Utils.h"
 #include "Logger.h"
+#include "Config.h"
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
@@ -11,7 +12,7 @@
 
 using std::string;
 
-const char* username = "tyler";
+const char* configPath = "/etc/argyle.conf";
 Server* server = NULL;
 
 // Currently handles SIGINT and SIGTERM.
@@ -55,7 +56,7 @@ bool setUser(const char* runAs, Logger& logger)
   }
   else if (pwdPtr == 0)
   {
-    logger.logError(string("Getpwdnam_r failed, couldn't find user ") + username);
+    logger.logError(string("Getpwdnam_r failed, couldn't find user ") + runAs);
     retval = false;
   }
 
@@ -89,10 +90,11 @@ int main(int argc, char *argv[])
     return 5; // No logfiles yet.
   }
 
-  Logger logger;
+  Config config(configPath);
+  Logger logger(config);
   logger.open();
-
-  server = new Server(80, logger);
+  
+  server = new Server(80, logger, config);
   if (!server->bindPort())
   {
     return 1;
@@ -101,7 +103,7 @@ int main(int argc, char *argv[])
   {
     return 2;
   }
-  else if (!setUser(username, logger))
+  else if (!setUser(config.getString(Config::S_KEY_RUN_AS_USERNAME).c_str(), logger))
   {
     return 3;
   }

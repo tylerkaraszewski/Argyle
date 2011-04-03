@@ -7,15 +7,8 @@
 
 using std::string;
 
-#ifdef __linux__
-const string Logger::S_ACCESS_FILE_PATH = "/home/tyler/logs/argyle_access.log";
-const string Logger::S_ERROR_FILE_PATH = "/home/tyler/logs/argyle_error.log";
-#else
-const string Logger::S_ACCESS_FILE_PATH = "/Users/tyler/argyle_access.log";
-const string Logger::S_ERROR_FILE_PATH = "/Users/tyler/argyle_error.log";
-#endif
-
-Logger::Logger() :
+Logger::Logger(const Config& config) :
+m_config(config),
 m_accessFile(NULL),
 m_errorFile(NULL)
 {
@@ -23,13 +16,16 @@ m_errorFile(NULL)
 
 bool Logger::open()
 {
+  string accessFilePath = m_config.getString(Config::S_KEY_ACCESS_FILE_PATH);
+  string errorFilePath = m_config.getString(Config::S_KEY_ERROR_FILE_PATH);
+
   close();
-  FILE* access = fopen(S_ACCESS_FILE_PATH.c_str(), "a");
+  FILE* access = fopen(accessFilePath.c_str(), "a");
   if (access == NULL)
   {
     return false;
   }
-  FILE* error = fopen(S_ERROR_FILE_PATH.c_str(), "a");
+  FILE* error = fopen(errorFilePath.c_str(), "a");
   if (error == NULL)
   {
     return false;

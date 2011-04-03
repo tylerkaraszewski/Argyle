@@ -1,14 +1,13 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include "Config.h"
 #include <string>
 
 class Logger
 {
   public:
-  Logger();
-  static const std::string S_ACCESS_FILE_PATH;
-  static const std::string S_ERROR_FILE_PATH;
+  Logger(const Config& config);
 
   bool open();
   void close();
@@ -18,6 +17,7 @@ class Logger
   private:
   void log(FILE* file, const std::string& msg);
 
+  const Config& m_config;
   FILE* m_accessFile;
   FILE* m_errorFile;
 };

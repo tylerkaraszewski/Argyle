@@ -2,6 +2,7 @@
 #include "Utils.h"
 #include <stdio.h>
 #include <errno.h>
+#include <string.h>
 
 using std::string;
 using std::vector;

@@ -64,7 +64,7 @@ m_config(config)
   }
   int code = m_reader->getHttpResponseCode();
   m_keepAlive = m_reader->lengthKnown();
-  m_headerBuffer = "HTTP/1.1 " + Utils::llToString(code) + ErrorReader::getErrorMessage(code) + "\r\n";
+  m_headerBuffer = "HTTP/1.1 " + Utils::llToString(code) + " " + ErrorReader::getErrorMessage(code) + "\r\n";
   m_headerBuffer += S_STANDARD_HEADERS;
   if (mtime != 0)
   {

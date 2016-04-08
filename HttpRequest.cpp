@@ -1,5 +1,6 @@
 #include "HttpRequest.h"
 #include "Utils.h"
+#include <stdlib.h>
 #include <algorithm>
 
 using std::string;

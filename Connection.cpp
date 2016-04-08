@@ -109,7 +109,7 @@ bool Connection::process(short int& pollEvents, short int& pollRevents)
     string ims = m_currentRequest->getHeader("if-modified-since");
     if (!ims.empty())
     {
-      m_logger.logError("Debug: parsed '" + ims + "' to: " + Utils::llToString(m_currentRequest->getIfModifiedSince()));
+      //m_logger.logError("Debug: parsed '" + ims + "' to: " + Utils::llToString(m_currentRequest->getIfModifiedSince()));
     }
 
     m_currentResponse = new HttpResponse(*m_currentRequest, m_logger, m_config);
